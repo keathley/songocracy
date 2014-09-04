@@ -1,1 +1,7 @@
 config/*.key
+.bundle
+.spotify
+lib/.spotify
+
+config/*.key
+lib/*.key
