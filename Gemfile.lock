@@ -16,6 +16,7 @@ GEM
     performer (1.0.1)
     plaything (1.1.1)
       ffi (~> 1.1)
+    redis (3.0.7)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -34,5 +35,6 @@ PLATFORMS
 
 DEPENDENCIES
   plaything (~> 1.1)
+  redis
   rspec
   spotify!
