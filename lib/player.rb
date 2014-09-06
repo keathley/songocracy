@@ -1,99 +1,130 @@
 require "json"
 require "plaything"
+require "logger"
+require "bundler/setup"
+require "spotify"
+require "io/console"
 
 require_relative 'player/frame_reader'
-require_relative "support"
+require_relative 'player/session_callbacks'
+require_relative 'player/log_formatter'
+
+Thread.abort_on_exception = true
 
 module Player
-end
 
-#
-# Global callback procs.
-#
-# They are global variables to protect from ever being garbage collected.
-#
-# You must not allow the callbacks to ever be garbage collected, or libspotify
-# will hold information about callbacks that no longer exist, and crash upon
-# calling the first missing callback. This is *very* important!
+  APP_KEY_FILE = File.expand_path('../spotify_appkey.key', __FILE__)
 
-$session_callbacks = {
-  log_message: proc do |session, message|
-    $logger.info("session (log message)") { message }
-  end,
+  DEFAULT_CONFIG = {
+    api_version: Spotify::API_VERSION.to_i,
+    application_key: File.binread(APP_KEY_FILE),
+    cache_location: ".spotify/",
+    settings_location: ".spotify/",
+    user_agent: "spotify for ruby",
+    callbacks: Spotify::SessionCallbacks.new
+  }
 
-  logged_in: proc do |session, error|
-    $logger.debug("session (logged in)") { Spotify::Error.explain(error) }
-  end,
+  def self.logger
+    @logger ||= Logger.new(STDOUT)
+    @logger.level = Logger::INFO
+    @logger.formatter = LogFormatter.new
+    @logger
+  end
 
-  logged_out: proc do |session|
-    $logger.debug("session (logged out)") { "logged out!" }
-  end,
+  def self.plaything
+    @plaything ||= Plaything.new
+  end
 
-  streaming_error: proc do |session, error|
-    $logger.error("session (player)") { "streaming error %s" % Spotify::Error.explain(error) }
-  end,
+  def self.callbacks
+    @callbacks ||= SessionCallbacks.new(plaything, logger)
+  end
 
-  start_playback: proc do |session|
-    $logger.debug("session (player)") { "start playback" }
-    plaything.play
-  end,
+  def self.play!
+    DEFAULT_CONFIG[:callbacks] = Spotify::SessionCallbacks.new(callbacks.hash)
 
-  stop_playback: proc do |session|
-    $logger.debug("session (player)") { "stop playback" }
-    plaything.stop
-  end,
+    session = initialize_spotify!(DEFAULT_CONFIG)
 
-  get_audio_buffer_stats: proc do |session, stats|
-    stats[:samples] = plaything.queue_size
-    stats[:stutter] = plaything.drops
-    $logger.debug("session (player)") { "queue size [#{stats[:samples]}, #{stats[:stutter]}]" }
-  end,
+    play_track(session, "spotify:track:666Gq86pwKtAJcLB9Jg9aF")
+    # play_track(session, "spotify:track:2j6oDxFsF0Fjd4rDhFQCsL")
 
-  music_delivery: proc do |session, format, frames, num_frames|
-    if num_frames == 0
-      $logger.debug("session (player)") { "music delivery audio discontuity" }
-      plaything.stop
-      0
+    logger.info "Playing track until end. Use ^C to exit."
+    poll(session) { callbacks.end_of_track? }
+  end
+
+  def self.initialize_spotify!(config)
+    error, session = Spotify.session_create(config)
+    raise Spotify::Error.new(error) if error
+
+    if username = Spotify.session_remembered_user(session)
+      logger.info "Using remembered login for: #{username}."
+      Spotify.try(:session_relogin, session)
     else
-      frames = Player::FrameReader.new(format[:channels], format[:sample_type], num_frames, frames)
-      consumed_frames = plaything.stream(frames, format.to_h)
-      $logger.debug("session (player)") { "music delivery #{consumed_frames} of #{num_frames}" }
-      consumed_frames
+      username = prompt("Spotify username, or Facebook e-mail")
+      password = $stdin.noecho {
+        prompt("Spotify password, or Facebook password")
+      }
+
+      logger.info "Attempting login with #{username}."
+      Spotify.try(:session_login, session, username, password, true, nil)
     end
-  end,
 
-  end_of_track: proc do |session|
-    $end_of_track = true
-    $logger.debug("session (player)") { "end of track" }
-    plaything.stop
-  end,
-}
+    logger.info "Log in requested. Waiting forever until logged in."
+    poll(session) {
+      Spotify.session_connectionstate(session) == :logged_in
+    }
 
-def play_track(session, uri)
-  link = Spotify.link_create_from_string(uri)
-  track = Spotify.link_as_track(link)
-  Support.poll(session) { Spotify.track_is_loaded(track) }
+    at_exit do
+      logger.info "Logging out."
+      Spotify.session_logout(session)
+      poll(session) {
+        Spotify.session_connectionstate(session) != :logged_in
+      }
+    end
 
-  # Pause before we load a new track. Fixes a quirk in libspotify.
-  Spotify.try(:session_player_play, session, false)
-  Spotify.try(:session_player_load, session, track)
-  Spotify.try(:session_player_play, session, true)
+    session
+  end
+
+  # libspotify supports callbacks, but they are not useful for waiting on
+  # operations (how they fire can be strange at times, and sometimes they
+  # might not fire at all). As a result, polling is the way to go.
+  def self.poll(session, idle_time = 0.05)
+    until yield
+      print "."
+      process_events(session)
+      sleep(idle_time)
+    end
+  end
+
+  # Process libspotify events once.
+  def self.process_events(session)
+    Spotify.session_process_events(session)
+  end
+
+  # Ask the user for input with a prompt explaining what kind of input.
+  def self.prompt(message, default = nil)
+    if default
+      print "\n#{message} [#{default}]: "
+      input = gets.chomp
+
+      if input.empty?
+        default
+      else
+        input
+      end
+    else
+      print "\n#{message}: "
+      gets.chomp
+    end
+  end
+
+  def self.play_track(session, uri)
+    link = Spotify.link_create_from_string(uri)
+    track = Spotify.link_as_track(link)
+    poll(session) { Spotify.track_is_loaded(track) }
+
+    # Pause before we load a new track. Fixes a quirk in libspotify.
+    Spotify.try(:session_player_play, session, false)
+    Spotify.try(:session_player_load, session, track)
+    Spotify.try(:session_player_play, session, true)
+  end
 end
-
-plaything = Plaything.new
-
-#
-# Main work code.
-#
-
-# You can read about what these session configuration options do in the
-# libspotify documentation:
-# https://developer.spotify.com/technologies/libspotify/docs/12.1.45/structsp__session__config.html
-Support::DEFAULT_CONFIG[:callbacks] = Spotify::SessionCallbacks.new($session_callbacks)
-
-session = Support.initialize_spotify!
-
-play_track(session, Support.prompt("Spotify track URI", "spotify:track:5iIeIeH3LBSMK92cMIXrVD"))
-
-$logger.info "Playing track until end. Use ^C to exit."
-Support.poll(session) { $end_of_track }
