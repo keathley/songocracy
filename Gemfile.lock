@@ -10,18 +10,12 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    coderay (1.1.0)
     diff-lcs (1.2.5)
     ffi (1.9.3)
     libspotify (12.1.51.4)
-    method_source (0.8.2)
     performer (1.0.1)
     plaything (1.1.1)
       ffi (~> 1.1)
-    pry (0.10.1)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
-      slop (~> 3.4)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -34,13 +28,11 @@ GEM
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
-    slop (3.6.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   plaything (~> 1.1)
-  pry
   rspec
   spotify!
