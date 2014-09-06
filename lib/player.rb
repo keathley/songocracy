@@ -1,46 +1,11 @@
-#!/usr/bin/env ruby
-# encoding: utf-8
-
-require_relative "support"
-
 require "json"
 require "plaything"
 
-def play_track(session, uri)
-  link = Spotify.link_create_from_string(uri)
-  track = Spotify.link_as_track(link)
-  Support.poll(session) { Spotify.track_is_loaded(track) }
+require_relative 'player/frame_reader'
+require_relative "support"
 
-  # Pause before we load a new track. Fixes a quirk in libspotify.
-  Spotify.try(:session_player_play, session, false)
-  Spotify.try(:session_player_load, session, track)
-  Spotify.try(:session_player_play, session, true)
+module Player
 end
-
-class FrameReader
-  include Enumerable
-
-  def initialize(channels, sample_type, frames_count, frames_ptr)
-    @channels = channels
-    @sample_type = sample_type
-    @size = frames_count * @channels
-    @pointer = FFI::Pointer.new(@sample_type, frames_ptr)
-  end
-
-  attr_reader :size
-
-  def each
-    return enum_for(__method__) unless block_given?
-
-    ffi_read = :"read_#{@sample_type}"
-
-    (0...size).each do |index|
-      yield @pointer[index].public_send(ffi_read)
-    end
-  end
-end
-
-plaything = Plaything.new
 
 #
 # Global callback procs.
@@ -90,7 +55,7 @@ $session_callbacks = {
       plaything.stop
       0
     else
-      frames = FrameReader.new(format[:channels], format[:sample_type], num_frames, frames)
+      frames = Player::FrameReader.new(format[:channels], format[:sample_type], num_frames, frames)
       consumed_frames = plaything.stream(frames, format.to_h)
       $logger.debug("session (player)") { "music delivery #{consumed_frames} of #{num_frames}" }
       consumed_frames
@@ -103,6 +68,19 @@ $session_callbacks = {
     plaything.stop
   end,
 }
+
+def play_track(session, uri)
+  link = Spotify.link_create_from_string(uri)
+  track = Spotify.link_as_track(link)
+  Support.poll(session) { Spotify.track_is_loaded(track) }
+
+  # Pause before we load a new track. Fixes a quirk in libspotify.
+  Spotify.try(:session_player_play, session, false)
+  Spotify.try(:session_player_load, session, track)
+  Spotify.try(:session_player_play, session, true)
+end
+
+plaything = Plaything.new
 
 #
 # Main work code.
