@@ -53,7 +53,7 @@ module Player
   # Creates the initial spotify session
   # This session also encompasses what happens when the script exits
   # @param config [Hash] the configuration hash
-  # @return [Spotify:Session] the spotify session
+  # @return [Spotify::Session] the spotify session
   def self.initialize_spotify!(config)
     error, session = Spotify.session_create(config)
     raise Spotify::Error.new(error) if error
@@ -88,14 +88,18 @@ module Player
   end
 
   # The main loop for playing songs.  It loops, pulling song ids from redis
-  # and playing them.  If there is nothing in redis then it blocks until it can
+  # and playing them.  If there is nothing in redis then it polls again after a
+  # specified delay
   # @param session [Spotify::Session] the spotify session
+  # @param idle_time [Integer] the time to wait before polling redis again
   # @return [void]
-  def self.play_loop(session)
+  def self.play_loop(session, idle_time=5)
     logger.info "Playing tracks"
     loop do
-      play_track(session, "spotify:track:5OyurLkQVrXM7I33eiF696")
-      play_track(session, "spotify:track:3fxW8hal5spPoqA1gcChgx")
+      until track_id = get_track_id_from_list
+        sleep idle_time
+      end
+      play_track(session, spotify_track_uri(track_id))
     end
     logger.info "Done Playing tracks"
   end
@@ -117,15 +121,46 @@ module Player
     Spotify.session_process_events(session)
   end
 
+  # Gets the top rated track from the track list
+  # Pulls the top rated track_id from redis list.  It uses redis 'transactions'
+  # in order to do this automically
+  # @note This is a good candidate to easily move into a new object
+  # @note It's possible for this operation to fail.  Need to handle that
+  # @return [track_id]
+  def self.get_track_id_from_list
+    logger.info "Getting track from redis"
+    track = ""
+    $redis.watch('track_list') do
+      track = $redis.zrevrange('track_list', 0, 0)
+      $redis.multi do |multi|
+        multi.zrem('track_list', track) unless track.empty?
+      end
+    end
+    track.first
+  end
+
+  # Converts a track id into a spotify uri
+  # @param track_id [String] the track id
+  # @return [String] the converted string
+  def self.spotify_track_uri(track_id)
+    "spotify:track:#{track_id}"
+  end
+
   # Play a specified track
   # Loads a track and plays it.  Once the track has ended it then unloads
   # the track.  This is necessary in order to play new track in the future.
+  # @param session [Spotify::Session] the current session
+  # @param uri [String] the uri of the track that should be played
+  # @return [void]
   def self.play_track(session, uri)
     track = get_track(uri)
     load_and_play_track(session, track)
     clean_up_track(session)
   end
 
+  # Gets the spotify track object
+  # @param uri
+  # @return [Spotify::Track] the track object for the given uri
   def self.get_track(uri)
     Spotify.link_as_track(Spotify.link_create_from_string(uri))
   end
