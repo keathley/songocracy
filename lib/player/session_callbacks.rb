@@ -1,12 +1,14 @@
-# Global callback procs.
-#
-# They are global variables to protect from ever being garbage collected.
-#
-# You must not allow the callbacks to ever be garbage collected, or libspotify
-# will hold information about callbacks that no longer exist, and crash upon
-# calling the first missing callback. This is *very* important!
 module Player
+  # Global callback procs.
+  #
+  # They are global variables to protect from ever being garbage collected.
+  #
+  # You must not allow the callbacks to ever be garbage collected, or libspotify
+  # will hold information about callbacks that no longer exist, and crash upon
+  # calling the first missing callback. This is *very* important!
   class SessionCallbacks
+
+    attr_accessor :end_of_track
 
     def initialize(plaything, logger)
       @plaything = plaything
@@ -35,6 +37,7 @@ module Player
         end,
 
         start_playback: proc do |session|
+          @end_of_track = false
           @logger.debug("session (player)") { "start playback" }
           @plaything.play
         end,
