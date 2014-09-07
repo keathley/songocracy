@@ -29,6 +29,7 @@ GEM
     rspec-mocks (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.4)
+    yard (0.8.7.4)
 
 PLATFORMS
   ruby
@@ -38,3 +39,4 @@ DEPENDENCIES
   redis
   rspec
   spotify!
+  yard

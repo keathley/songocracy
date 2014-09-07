@@ -7,3 +7,11 @@ gem 'redis'
 group :development, :test do
   gem 'rspec'
 end
+
+group :documentation do
+
+end
+
+group :development, :documentation do
+  gem 'yard'
+end
