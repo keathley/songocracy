@@ -6,7 +6,7 @@ require "spotify"
 require "io/console"
 require 'redis'
 
-require './lib/redis'
+require './config/redis'
 require './lib/player/frame_reader'
 require './lib/player/session_callbacks'
 require './lib/player/log_formatter'
