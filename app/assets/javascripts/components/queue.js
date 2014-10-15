@@ -5,16 +5,31 @@ var React = require('react');
 var Song = require('./song');
 
 var Queue = React.createClass({
+  getInitialState: function() {
+    return {
+      songs: []
+    };
+  },
+  componentDidMount: function() {
+    faye.subscribe('/songs', function(song) {
+      this.updateSongList(song);
+    }.bind(this));
+  },
+  updateSongList: function(song) {
+    this.setState({
+      songs: this.state.songs.concat([song.id])
+    });
+  },
   render: function() {
-    var songs = this.props.songs.map(function(song) {
+    var songs = this.state.songs.map(function(song) {
       return (
         <li>{song}</li>
       );
     });
     return (
-      <div>
+      <ul>
         {songs}
-      </div>
+      </ul>
     );
   }
 });

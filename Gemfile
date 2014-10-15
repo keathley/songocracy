@@ -6,6 +6,9 @@ gem 'redis'
 gem 'unicorn'
 gem 'sinatra'
 
+gem 'faye'
+gem 'puma' # Needed for Faye
+
 group :development, :test do
   gem 'foreman'
   gem 'rspec', "~> 3.1.0"

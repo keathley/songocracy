@@ -10,19 +10,45 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    addressable (2.3.6)
+    cookiejar (0.3.2)
     diff-lcs (1.2.5)
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
+    em-http-request (1.1.2)
+      addressable (>= 2.3.4)
+      cookiejar
+      em-socksify (>= 0.3)
+      eventmachine (>= 1.0.3)
+      http_parser.rb (>= 0.6.0)
+    em-socksify (0.3.0)
+      eventmachine (>= 1.0.0.beta.4)
+    eventmachine (1.0.3)
+    faye (1.0.1)
+      cookiejar (>= 0.3.0)
+      em-http-request (>= 0.3.0)
+      eventmachine (>= 0.12.0)
+      faye-websocket (>= 0.7.0)
+      multi_json (>= 1.0.0)
+      rack (>= 1.0.0)
+      websocket-driver (>= 0.3.0)
+    faye-websocket (0.7.2)
+      eventmachine (>= 0.12.0)
+      websocket-driver (>= 0.3.1)
     ffi (1.9.3)
     foreman (0.75.0)
       dotenv (~> 0.11.1)
       thor (~> 0.19.1)
+    http_parser.rb (0.6.0)
     kgio (2.9.2)
     libspotify (12.1.51.4)
+    multi_json (1.10.1)
     performer (1.0.1)
     plaything (1.1.1)
       ffi (~> 1.1)
+    puma (2.8.1)
+      rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -54,14 +80,17 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    websocket-driver (0.3.2)
     yard (0.8.7.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  faye
   foreman
   plaything (~> 1.1)
+  puma
   rack-test
   redis
   rspec (~> 3.1.0)

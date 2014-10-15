@@ -15,6 +15,8 @@
 .repl_history
 build/
 
+*.sublime*
+
 ## Documentation cache and generated files:
 /.yardoc/
 /_yardoc/
