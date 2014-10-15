@@ -17,6 +17,7 @@ module Songocracy
         end
 
         it "should send a broadcast message" do
+          expect(Queue).to receive(:add_song).with(@track)
           expect(Faye).to receive(:broadcast)
           post '/queue', :id => id
         end
