@@ -8,11 +8,11 @@ gem 'sinatra'
 
 group :development, :test do
   gem 'foreman'
-  gem 'rspec'
+  gem 'rspec', "~> 3.1.0"
 end
 
-group :documentation do
-
+group :test do
+  gem 'rack-test'
 end
 
 group :development, :documentation do
