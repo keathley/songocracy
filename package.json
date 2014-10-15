@@ -1,0 +1,39 @@
+{
+  "name": "songocracy",
+  "version": "0.0.0",
+  "description": "democratized music",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spyc3r/songocracy.git"
+  },
+  "keywords": [
+    "music",
+    "democracy"
+  ],
+  "author": "Spyc3r (Chris Keathley)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spyc3r/songocracy/issues"
+  },
+  "homepage": "https://github.com/spyc3r/songocracy",
+  "devDependencies": {
+    "gulp": "^3.7.0",
+    "gulp-browserify": "^0.5.0",
+    "gulp-concat": "^2.2.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-minify-css": "^0.3.10",
+    "gulp-ruby-sass": "^0.7.1",
+    "bower": "^1.3.12"
+  },
+  "dependencies": {
+    "react": "^0.11.2",
+    "reactify": "^0.13.1"
+  }
+}
