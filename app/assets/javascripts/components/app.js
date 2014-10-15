@@ -7,7 +7,6 @@ var Queue = require('./queue');
 var APP = React.createClass({
   getInitialState: function() {
     return {
-      songs: [],
       text: ''
     };
   },
@@ -16,8 +15,8 @@ var APP = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
+    $.post('/queue', { 'id': this.state.text });
     this.setState({
-      songs: this.state.songs.concat([this.state.text]),
       text: ''
     });
   },
@@ -29,9 +28,10 @@ var APP = React.createClass({
           <input onChange={this.onChange} value={this.state.text} />
           <button>Add Song</button>
         </form>
-        <Queue songs={this.state.songs}/>
+        <Queue />
       </div>
     );
   }
 });
+
 module.exports = APP;
