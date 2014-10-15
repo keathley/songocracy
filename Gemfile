@@ -5,14 +5,19 @@ gem "plaything", "~> 1.1"
 gem 'redis'
 gem 'unicorn'
 gem 'sinatra'
+gem 'rspotify'
 
 gem 'faye'
 gem 'puma' # Needed for Faye
+
+gem 'pry'
 
 group :development, :test do
   gem 'foreman'
   gem 'rspec', "~> 3.1.0"
   gem 'shotgun'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :test do

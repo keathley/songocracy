@@ -14,6 +14,15 @@ var Queue = React.createClass({
     faye.subscribe('/songs', function(song) {
       this.updateSongList(song);
     }.bind(this));
+
+    $.get('/queue', function(data) {
+      this.loadSongs(data);
+    }.bind(this));
+  },
+  loadSongs: function(songs) {
+    this.setState({
+      songs: songs
+    });
   },
   updateSongList: function(song) {
     this.setState({

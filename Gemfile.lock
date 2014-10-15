@@ -11,7 +11,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.6)
+    coderay (1.1.0)
     cookiejar (0.3.2)
+    crack (0.4.2)
+      safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
@@ -25,6 +28,8 @@ GEM
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
     eventmachine (1.0.3)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     faye (1.0.1)
       cookiejar (>= 0.3.0)
       em-http-request (>= 0.3.0)
@@ -40,13 +45,37 @@ GEM
     foreman (0.75.0)
       dotenv (~> 0.11.1)
       thor (~> 0.19.1)
+    hashie (3.3.1)
     http_parser.rb (0.6.0)
+    jwt (1.0.0)
     kgio (2.9.2)
     libspotify (12.1.51.4)
+    method_source (0.8.2)
     multi_json (1.10.1)
+    multi_xml (0.5.5)
+    multipart-post (2.0.0)
+    netrc (0.7.8)
+    oauth2 (1.0.0)
+      faraday (>= 0.8, < 0.10)
+      jwt (~> 1.0)
+      multi_json (~> 1.3)
+      multi_xml (~> 0.5)
+      rack (~> 1.2)
+    omniauth (1.2.2)
+      hashie (>= 1.2, < 4)
+      rack (~> 1.0)
+    omniauth-oauth2 (1.2.0)
+      faraday (>= 0.8, < 0.10)
+      multi_json (~> 1.3)
+      oauth2 (~> 1.0)
+      omniauth (~> 1.2)
     performer (1.0.1)
     plaything (1.1.1)
       ffi (~> 1.1)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     puma (2.8.1)
       rack (>= 1.1, < 2.0)
     rack (1.5.2)
@@ -56,6 +85,8 @@ GEM
       rack (>= 1.0)
     raindrops (0.13.0)
     redis (3.0.7)
+    rest_client (1.7.3)
+      netrc (~> 0.7.7)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -68,18 +99,27 @@ GEM
     rspec-mocks (3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.0)
+    rspotify (1.4.0)
+      omniauth-oauth2 (~> 1.1)
+      rest_client (~> 1.7)
+    safe_yaml (1.0.4)
     shotgun (0.9)
       rack (>= 1.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
+    slop (3.6.0)
     thor (0.19.1)
     tilt (1.4.1)
     unicorn (4.8.3)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    vcr (2.9.3)
+    webmock (1.19.0)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
     websocket-driver (0.3.2)
     yard (0.8.7.4)
 
@@ -90,12 +130,16 @@ DEPENDENCIES
   faye
   foreman
   plaything (~> 1.1)
+  pry
   puma
   rack-test
   redis
   rspec (~> 3.1.0)
+  rspotify
   shotgun
   sinatra
   spotify!
   unicorn
+  vcr
+  webmock
   yard

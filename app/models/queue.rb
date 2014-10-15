@@ -3,7 +3,11 @@ module Songocracy
     TRACK_LIST = 'track_list'
 
     def self.add_song(track, score=1)
-      $redis.zadd(TRACK_LIST, score, track)
+      $redis.zadd(TRACK_LIST, score, track.to_json)
+    end
+
+    def self.all
+      $redis.zrevrange(TRACK_LIST, 0, -1)
     end
   end
 end

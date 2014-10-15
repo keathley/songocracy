@@ -3,10 +3,12 @@ require 'sinatra/base'
 require 'json'
 require 'redis'
 require 'net/http'
+require 'rspotify'
 
 require './config/redis'
 require_relative 'models/queue'
 require_relative 'models/faye'
+require_relative 'models/track'
 
 require_relative 'api/queue_controller'
 
