@@ -42,6 +42,8 @@ GEM
     rspec-mocks (3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.0)
+    shotgun (0.9)
+      rack (>= 1.0)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -63,6 +65,7 @@ DEPENDENCIES
   rack-test
   redis
   rspec (~> 3.1.0)
+  shotgun
   sinatra
   spotify!
   unicorn

@@ -9,6 +9,7 @@ gem 'sinatra'
 group :development, :test do
   gem 'foreman'
   gem 'rspec', "~> 3.1.0"
+  gem 'shotgun'
 end
 
 group :test do
