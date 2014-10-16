@@ -16,7 +16,6 @@ var Queue = React.createClass({
     }.bind(this));
 
     $.get('/queue', function(data) {
-      console.log(data);
       this.loadSongs(data);
     }.bind(this));
   },
@@ -38,7 +37,7 @@ var Queue = React.createClass({
       );
     });
     return (
-      <ul>
+      <ul className="track-list">
         {songs}
       </ul>
     );

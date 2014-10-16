@@ -7,3 +7,12 @@ html, body {
   background: transparent;
 }
 
+#main-container {
+  max-width: 768px;
+  margin: 0 auto;
+
+  header {
+    border-bottom: 1px solid #ccc;
+    padding: 20px 0px;
+  }
+}

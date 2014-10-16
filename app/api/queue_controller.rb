@@ -6,8 +6,8 @@ module Songocracy
       @track = Track.find(params[:id])
 
       unless @track.nil?
-        Queue.add_song(@track)
-        Faye.broadcast('/songs', @track)
+        valid = Queue.add_song(@track)
+        Faye.broadcast('/songs', @track) if valid
       end
     end
 

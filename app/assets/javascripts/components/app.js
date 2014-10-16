@@ -22,13 +22,16 @@ var APP = React.createClass({
   },
   render: function() {
     return (
-      <div>
-        <h1>Songocracy</h1>
-        <form onSubmit={this.handleSubmit}>
-          <input onChange={this.onChange} value={this.state.text} />
-          <button>Add Song</button>
-        </form>
-        <Queue />
+      <div id="main-container">
+        <header>
+          <h1>Songocracy</h1>
+        </header>
+        <section className="queue-container">
+          <form onSubmit={this.handleSubmit} className="track-form">
+            <input onChange={this.onChange} value={this.state.text} />
+          </form>
+          <Queue />
+        </section>
       </div>
     );
   }
