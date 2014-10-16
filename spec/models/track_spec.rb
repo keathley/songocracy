@@ -4,7 +4,6 @@ module Songocracy
   describe Track do
     describe ".find" do
       it "should return a new instance of track", :vcr do
-
         id = "3fPSHjVO4iwwGEhHvTwlNb"
         name = "Try Honesty"
         artist = "Billy Talent"

@@ -96,10 +96,11 @@ module Player
   def self.play_loop(session, idle_time=5)
     logger.info "Playing tracks"
     loop do
-      until track_id = get_track_id_from_list
+      until track = get_track_from_list
         sleep idle_time
       end
-      play_track(session, spotify_track_uri(track_id))
+      id = JSON.parse(track)['id']
+      play_track(session, spotify_track_uri(id))
     end
     logger.info "Done Playing tracks"
   end
@@ -127,7 +128,7 @@ module Player
   # @note This is a good candidate to easily move into a new object
   # @note It's possible for this operation to fail.  Need to handle that
   # @return [track_id]
-  def self.get_track_id_from_list
+  def self.get_track_from_list
     logger.info "Getting track from redis"
     track = ""
     $redis.watch('track_list') do

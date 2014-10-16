@@ -16,6 +16,7 @@ var Queue = React.createClass({
     }.bind(this));
 
     $.get('/queue', function(data) {
+      console.log(data);
       this.loadSongs(data);
     }.bind(this));
   },
@@ -25,14 +26,15 @@ var Queue = React.createClass({
     });
   },
   updateSongList: function(song) {
+    console.log(song);
     this.setState({
-      songs: this.state.songs.concat([song.id])
+      songs: this.state.songs.concat([song])
     });
   },
   render: function() {
     var songs = this.state.songs.map(function(song) {
       return (
-        <li>{song}</li>
+        <li><Song song={song} /></li>
       );
     });
     return (

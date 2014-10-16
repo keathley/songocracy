@@ -7,7 +7,8 @@ module Songocracy
     end
 
     def self.all
-      $redis.zrevrange(TRACK_LIST, 0, -1)
+      tracks = $redis.zrevrange(TRACK_LIST, 0, -1)
+      tracks.map { |track| JSON.parse(track) }
     end
   end
 end

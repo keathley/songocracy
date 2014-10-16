@@ -1,11 +1,13 @@
 module Songocracy
   class App < Sinatra::Base
     post "/queue" do
+      content_type :json
+
       @track = Track.find(params[:id])
 
       unless @track.nil?
         Queue.add_song(@track)
-        Faye.broadcast('/songs', {:id => params[:id]})
+        Faye.broadcast('/songs', @track)
       end
     end
 
