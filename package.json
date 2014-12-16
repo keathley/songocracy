@@ -7,33 +7,40 @@
     "doc": "doc"
   },
   "scripts": {
+    "start": "node server.js",
+    "build": "gulp",
     "test": ""
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/spyc3r/songocracy.git"
+    "url": "git://github.com/keathley/songocracy.git"
   },
   "keywords": [
     "music",
     "democracy"
   ],
-  "author": "Spyc3r (Chris Keathley)",
+  "author": "Keathley (Chris Keathley)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/spyc3r/songocracy/issues"
+    "url": "https://github.com/keathley/songocracy/issues"
   },
-  "homepage": "https://github.com/spyc3r/songocracy",
+  "homepage": "https://github.com/keathley/songocracy",
   "devDependencies": {
+    "bower": "^1.3.12",
+    "browserify": "^7.0.0",
     "gulp": "^3.7.0",
-    "gulp-browserify": "^0.5.0",
-    "gulp-concat": "^2.2.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-minify-css": "^0.3.10",
     "gulp-ruby-sass": "^0.7.1",
-    "bower": "^1.3.12"
+    "pushstate-server": "^1.4.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "react": "^0.11.2",
-    "reactify": "^0.13.1"
+    "firebase": "^2.0.6",
+    "lodash": "^2.4.1",
+    "react": "^0.12.0",
+    "reactfire": "^0.4.0",
+    "reactify": "^0.15.2",
+    "reflux": "^0.2.1",
+    "reqwest": "^1.1.5"
   }
 }
